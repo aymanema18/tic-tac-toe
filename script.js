@@ -27,3 +27,27 @@ const gameBoard = (function(){
     })
     return {gameBoard};
 })();
+
+const players = (function() {
+    const players = []
+    let btns = document.querySelectorAll("button");
+    function player(value) {
+        value = value;
+        return {value};
+    }
+    
+    btns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            if (players.length < 2) {
+                players.push(player(btn.value))
+                if (players[0].value === "x") {
+                    players.push(player("o"))
+                } else {
+                    players.push(player("x"))
+                }
+            }
+        })
+    })
+    return {players};
+
+})()
