@@ -16,7 +16,7 @@ const gameBoard = (function(){
 })();
 
 const players = (function() {
-    const players = []
+    let players = []
     let btns = document.querySelectorAll("button");
     function player(value) {
         value = value;
@@ -39,12 +39,37 @@ const players = (function() {
             }
         })
     })
-    return {players};
+    function clear() {
+        players.length = 0;
+    }
+    return {players, clear};
 
+})()
+
+const display = (function() {
+    let btns = document.querySelectorAll(".btn");
+    const board = document.querySelector(".board")
+    const p1 = document.querySelector(".p1");
+    const p2 = document.querySelector(".p2");
+    const newBtn = document.querySelector(".new-game");
+
+    newBtn.disabled = true;
+    let p1Score = 0;
+    let p2Score = 0;
+    p1.textContent = `player 1: ${p1Score}`;
+    p2.textContent = `player 2: ${p2Score}`;
+    newBtn.addEventListener("click", () => {
+        players.clear();
+        playRound.clear();
+        newBtn.disabled = true;
+        playRound.result.textContent = "";
+    })
+    return {p1, p2, p1Score, p2Score, board, newBtn}
 })()
 
 const playRound = (function() {
     let btns = document.querySelectorAll(".btn");
+    const result = document.querySelector(".result");
 
     function getDomIndex (target) {
         return [].slice.call(target.parentNode.children).indexOf(target)
@@ -53,31 +78,50 @@ const playRound = (function() {
     btns.forEach((btn) => {
         btn.addEventListener("click", () => {
             if (players.players.length === 2) {
-                if (!btn.textContent && players.players[0].turn === true) {
-                    gameBoard.gameBoard[getDomIndex(btn)].value = players.players[0].value;
-                    btn.textContent = players.players[0].value;
-                    btn.value = players.players[0].value;
-                    btn.style.textAlign = "center";
-                    btn.style.backgroundColor = "green";
-                    players.players[0].turn = false;
-                    players.players[1].turn = true;
-                } else if (!btn.textContent && players.players[1].turn === true) {
-                    gameBoard.gameBoard[getDomIndex(btn)].value = players.players[1].value;
-                    btn.textContent = players.players[1].value;
-                    btn.value = players.players[1].value;
-                    btn.style.textAlign = "center";
-                    btn.style.backgroundColor = "red";
-                    players.players[1].turn = false;
-                    players.players[0].turn = true;
+                if (!checkGame.isOverCheck()) {
+                    if (!btn.textContent && players.players[0].turn === true) {
+                        gameBoard.gameBoard[getDomIndex(btn)].value = players.players[0].value;
+                        if (players.players[0].value === "x") {
+                            btn.innerHTML = `<img class="X" src="images/Group 14.png">`;
+                        } else {
+                            btn.innerHTML = `<img class="O" src="images/Ellipse 5 (Stroke).png">`;
+                        }
+                        btn.value = players.players[0].value;
+                        players.players[0].turn = false;
+                        players.players[1].turn = true;
+                    } else if (!btn.textContent && players.players[1].turn === true) {
+                        gameBoard.gameBoard[getDomIndex(btn)].value = players.players[1].value;
+                        if (players.players[1].value === "x") {
+                            btn.innerHTML = `<img class="X" src="images/Group 14.png">`;
+                        } else {
+                            btn.innerHTML = `<img class="O" src="images/Ellipse 5 (Stroke).png">`;
+                        }
+                        btn.value = players.players[1].value;
+                        players.players[1].turn = false;
+                        players.players[0].turn = true;
+                    }
                 }
             }
             if (checkGame.isOverCheck() !== false) {
                 if (checkGame.isOverCheck() === "draw") {
-                    console.log(`draw`);
+                    result.textContent = "Tie";
+                    display.newBtn.disabled = false;
                 } else {
                     for (let i = 0; i < 2; i++){
                         if (players.players[i].turn === false) {
-                            console.log(`${players.players[i].name} wins!`);
+                            if (players.players[i].name === "p1") {
+                                if (display.newBtn.disabled === true) {
+                                    display.p1Score++;
+                                    display.p1.textContent = `player 1: ${display.p1Score}`
+                                }
+                            } else {
+                                if (display.newBtn.disabled === true) {
+                                    display.p2Score++;
+                                    display.p2.textContent = `player 2: ${display.p2Score}`
+                                }
+                            }
+                            result.textContent = `${players.players[i].name} wins!`;
+                            display.newBtn.disabled = false;
                         }
                     }
                 }
@@ -86,7 +130,16 @@ const playRound = (function() {
     
     })
 
+    function clear() {
+        btns.forEach((btn) => {
+            gameBoard.gameBoard.forEach((cell) => {
+              cell.value = undefined;  
+            })
+            btn.textContent = "";
+        })
+    }
     
+    return {clear, result}
 })()
 
 const checkGame = (function() {
