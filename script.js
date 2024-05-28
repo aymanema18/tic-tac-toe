@@ -77,54 +77,57 @@ const playRound = (function() {
 
     btns.forEach((btn) => {
         btn.addEventListener("click", () => {
-            if (players.players.length === 2) {
-                if (!checkGame.isOverCheck()) {
-                    if (!btn.textContent && players.players[0].turn === true) {
-                        gameBoard.gameBoard[getDomIndex(btn)].value = players.players[0].value;
-                        if (players.players[0].value === "x") {
-                            btn.innerHTML = `<img class="X" src="images/Group 14.png">`;
-                        } else {
-                            btn.innerHTML = `<img class="O" src="images/Ellipse 5 (Stroke).png">`;
-                        }
-                        btn.value = players.players[0].value;
-                        players.players[0].turn = false;
-                        players.players[1].turn = true;
-                    } else if (!btn.textContent && players.players[1].turn === true) {
-                        gameBoard.gameBoard[getDomIndex(btn)].value = players.players[1].value;
-                        if (players.players[1].value === "x") {
-                            btn.innerHTML = `<img class="X" src="images/Group 14.png">`;
-                        } else {
-                            btn.innerHTML = `<img class="O" src="images/Ellipse 5 (Stroke).png">`;
-                        }
-                        btn.value = players.players[1].value;
-                        players.players[1].turn = false;
-                        players.players[0].turn = true;
-                    }
-                }
-            }
-            if (checkGame.isOverCheck() !== false) {
-                if (checkGame.isOverCheck() === "draw") {
-                    result.textContent = "Tie";
-                    display.newBtn.disabled = false;
-                } else {
-                    for (let i = 0; i < 2; i++){
-                        if (players.players[i].turn === false) {
-                            if (players.players[i].name === "p1") {
-                                if (display.newBtn.disabled === true) {
-                                    display.p1Score++;
-                                    display.p1.textContent = `player 1: ${display.p1Score}`
-                                }
+            if (gameBoard.gameBoard[getDomIndex(btn)].value === undefined) {
+                if (players.players.length === 2) {
+                    if (!checkGame.isOverCheck()) {
+                        if (!btn.textContent && players.players[0].turn === true) {
+                            gameBoard.gameBoard[getDomIndex(btn)].value = players.players[0].value;
+                            if (players.players[0].value === "x") {
+                                btn.innerHTML = `<img class="X" src="images/Group 14.png">`;
                             } else {
-                                if (display.newBtn.disabled === true) {
-                                    display.p2Score++;
-                                    display.p2.textContent = `player 2: ${display.p2Score}`
-                                }
+                                btn.innerHTML = `<img class="O" src="images/Ellipse 5 (Stroke).png">`;
                             }
-                            result.textContent = `${players.players[i].name} wins!`;
-                            display.newBtn.disabled = false;
+                            btn.value = players.players[0].value;
+                            players.players[0].turn = false;
+                            players.players[1].turn = true;
+                        } else if (!btn.textContent && players.players[1].turn === true) {
+                            gameBoard.gameBoard[getDomIndex(btn)].value = players.players[1].value;
+                            if (players.players[1].value === "x") {
+                                btn.innerHTML = `<img class="X" src="images/Group 14.png">`;
+                            } else {
+                                btn.innerHTML = `<img class="O" src="images/Ellipse 5 (Stroke).png">`;
+                            }
+                            btn.value = players.players[1].value;
+                            players.players[1].turn = false;
+                            players.players[0].turn = true;
                         }
                     }
                 }
+                if (checkGame.isOverCheck() !== false) {
+                    if (checkGame.isOverCheck() === "draw") {
+                        result.textContent = "Tie";
+                        display.newBtn.disabled = false;
+                    } else {
+                        for (let i = 0; i < 2; i++){
+                            if (players.players[i].turn === false) {
+                                if (players.players[i].name === "p1") {
+                                    if (display.newBtn.disabled === true) {
+                                        display.p1Score++;
+                                        display.p1.textContent = `player 1: ${display.p1Score}`
+                                    }
+                                } else {
+                                    if (display.newBtn.disabled === true) {
+                                        display.p2Score++;
+                                        display.p2.textContent = `player 2: ${display.p2Score}`
+                                    }
+                                }
+                                result.textContent = `${players.players[i].name} wins!`;
+                                display.newBtn.disabled = false;
+                            }
+                        }
+                    }
+                }
+
             }
         })
     
